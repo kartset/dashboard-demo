@@ -3,10 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ChakraProvider } from '@chakra-ui/react';
+import { Provider } from 'react-redux';
+import store from './redux/store';
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import Chapters from './components/Chapters';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <ChakraProvider>
+        <Router>
+          <Route path='/:classID/:subjectID/:chapterName' component={Chapters} />
+          <Route path='/' exact component={App} />
+        </Router>
+      </ChakraProvider>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

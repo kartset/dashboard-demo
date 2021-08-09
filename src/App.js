@@ -1,24 +1,34 @@
-import logo from './logo.svg';
+import { Heading, VStack } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import './App.css';
-
+import ListChapter from './components/ListChapter';
+import Selects from './components/Selects';
 function App() {
+  const [chapters, setChapters] = useState([])
+  const [selectedClass, setSelectedClass] = useState('')
+  const [selectedSubject, setSelectedSubject] = useState('')
+  function update(arr, sub, cls) {
+    setChapters(arr);
+    setSelectedSubject(sub);
+    setSelectedClass(cls);
+  }
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <div>
+        <VStack p={4}>
+        <Heading
+          mb="8" 
+          fontWeight="extrabold" 
+          size="2xl" 
+          bgGradient="linear(to-r, pink.500, pink.300, blue.500)"
+          bgClip="text"
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          Admin Dashboard
+        </Heading>
+        <Selects update={update} />
+        <ListChapter chapters={chapters} selectedClass={selectedClass} selectedSubject={selectedSubject} />
+  </VStack>
+      </div>
   );
 }
 
