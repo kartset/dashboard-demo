@@ -7,14 +7,14 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import { BrowserRouter as Router, Route } from 'react-router-dom'
-import Chapters from './components/Chapters';
+import Topics from './components/Topics';
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <ChakraProvider>
         <Router>
-          <Route path='/:classID/:subjectID/:chapterName' component={Chapters} />
+          <Route path='/:classID/:subjectID/:chapterName' component={Topics} />
           <Route path='/' exact component={App} />
         </Router>
       </ChakraProvider>
