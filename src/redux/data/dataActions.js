@@ -1,16 +1,16 @@
-import { ADD_CHAPTER, DELETE_CHAPTER, EDIT_CHAPTER } from './dataTypes'
+import { ADD_CHAPTER, DELETE_CHAPTER, EDIT_CHAPTER, SELECT_SUBJECT, SELECT_CLASS } from './dataTypes'
 
-export const addChapter = (arr) => {
+export const addChapter = (newName) => {
     return {
         type: ADD_CHAPTER,
-        payload: arr
+        payload: newName
     }
 }
 
-export const deleteChapter = (arr) => {
+export const deleteChapter = (chapterName) => {
     return {
         type: DELETE_CHAPTER,
-        payload: arr
+        payload: chapterName
 
     }
 }
@@ -19,5 +19,19 @@ export const editChapter = (arr) => {
     return {
         type: EDIT_CHAPTER,
         payload: arr
+    }
+}
+
+export const selectClass = (selectedClass) => {
+    return {
+        type: SELECT_CLASS,
+        payload: selectedClass
+    }
+}
+
+export const selectSubject = (selectedSubject) => {
+    return {
+        type: SELECT_SUBJECT,
+        payload: selectedSubject
     }
 }
