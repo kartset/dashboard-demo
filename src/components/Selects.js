@@ -1,31 +1,19 @@
 import { HStack, VStack, Select } from '@chakra-ui/react'
-import React, {useState} from 'react'
-import {useSelector} from 'react-redux'
+import React, {useState, useEffect} from 'react'
+import {useSelector, useDispatch } from 'react-redux'
+import { selectClass, selectSubject } from '../redux/data/dataActions'
 
 function Selects(props) {
     const dataState = useSelector((state) => state.data.dataState)
-    const [selectedClass, setSelectedClass] = useState('')
-    const [selectedSubject, setSelectedSubject] = useState('')
+    const selectedClass = useSelector((state) => state.data.selectedClass)
     const [subjects, setSubjects] = useState([])
-    //console.log(dataState)
-    function changeClass(e) { 
-        //setSelectedSubject('----------Choose Subject----------')
-		setSelectedClass(e.target.value);
-		setSubjects(dataState.find(cls => cls.class === e.target.value).subjects);
-        //console.log(subjects)
-	}
-    function changeSubject(event) {
-        //console.log(event.target.value)
-        
-		setSelectedSubject(event.target.value);
-		//const subs = dataState.find(cls => cls.class === selectedClass).subjects;
-        //console.log(subjects)
-        props.update(subjects.find(sub => sub.name === event.target.value).chapters,event.target.value,selectedClass)
-	}
-
-    //useEffect(() => {
-      //  dispatch()
-    //}, [selectedSubject])
+    const dispatch = useDispatch();
+    useEffect(() => {
+        if(parseInt(selectedClass))
+            setSubjects(dataState.find(cls => cls.class === selectedClass).subjects);
+        if(selectedClass === '-----------Choose Class-----------')
+            setSubjects([])
+    }, [selectedClass, dataState])
 
     return (
         <div>
@@ -37,7 +25,7 @@ function Selects(props) {
             w='100%'
             alignItems='stretch'>
                 <HStack>
-                    <Select variant="outline" value={selectedClass} onChange={(e) => changeClass(e)} >
+                    <Select variant="outline"  onChange={(e) => {dispatch(selectClass(e.target.value)); setSubjects([]); dispatch(selectSubject('----------Choose Subject----------'))}} >
                     <option>-----------Choose Class-----------</option>
                     {
                         dataState.map((e, key) => {
@@ -45,7 +33,7 @@ function Selects(props) {
                         })
                     }
                     </Select>
-                    <Select value={selectedSubject} onChange={(e) => changeSubject(e)}>
+                    <Select onChange={(e) => dispatch(selectSubject(e.target.value))}>
                         <option>----------Choose Subject----------</option>
                         {
                             subjects.map((e, key) => {
