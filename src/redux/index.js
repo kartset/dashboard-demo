@@ -1,1 +1,1 @@
-export { addChapter, deleteChapter, editChapter } from './data/dataActions'
+export { addChapter, deleteChapter, editChapter, selectClass, selectSubject } from './data/dataActions'

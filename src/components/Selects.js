@@ -1,7 +1,7 @@
 import { HStack, VStack, Select } from '@chakra-ui/react'
 import React, {useState, useEffect} from 'react'
 import {useSelector, useDispatch } from 'react-redux'
-import { selectClass, selectSubject } from '../redux/data/dataActions'
+import { selectClass, selectSubject } from '../redux'
 
 function Selects(props) {
     const dataState = useSelector((state) => state.data.dataState)
