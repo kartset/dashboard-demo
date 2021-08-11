@@ -1,15 +1,16 @@
-import { HStack, VStack, StackDivider, Text, Spacer, Badge, Heading, IconButton } from '@chakra-ui/react'
+import { HStack, VStack, StackDivider, Text, Spacer, Badge, Heading, IconButton, Box } from '@chakra-ui/react'
 import React, {useState, useMemo} from 'react'
 import {addChapter, deleteChapter, editChapter} from '../redux'
 import {useDispatch, useSelector} from 'react-redux'
 import { Link } from 'react-router-dom'
 import { FaEdit, FaTrash } from 'react-icons/fa'
+import { useToast } from "@chakra-ui/react"
+
 import {
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   Button,
@@ -18,11 +19,12 @@ import {
   FormControl
 } from "@chakra-ui/react"
 
+import { AddIcon } from '@chakra-ui/icons'
+
 
 function ListChapter() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [modalHeading, setModalHeading] = useState('');
-  const [modalInput, setModalInput] = useState('');
   const [editStatus, setEditStatus] = useState(true);
   const [oldName, setOldName] = useState('')
   const selectedClass = useSelector(state => state.data.selectedClass);
@@ -30,28 +32,50 @@ function ListChapter() {
   const dataState = useSelector(state => state.data.dataState)
   const initialRef = React.useRef()
   const dispatch = useDispatch()
+  const toast = useToast()
+  const statuses = ["success", "error", "warning", "info"]
+  
 
   function handleAddChapter() {
     setEditStatus(false);
     setModalHeading('Name New Chapter');
-    setModalInput('');
+  }
+  function successToast(message) {
+    toast({
+      title: message,
+      status: statuses[0],
+      isClosable: true,
+    })
+  }
+  function infoToast(message) {
+    toast({
+      title: message,
+      status: statuses[3],
+      isClosable: true,
+    })
   }
   
   function handleEditChapter(name) {
     setEditStatus(true);
     setModalHeading('Edit Chapter Name');
-    setModalInput('');
     setOldName(name)
   }
 
-  function handleSave() {
-    console.log(editStatus)
+  function handleSave(e) {
+    e.preventDefault()
+    let formData = new FormData(e.target)
+    let title = formData.get('title')
+
     if(editStatus) {
-      dispatch(editChapter([oldName, modalInput]));
+      dispatch(editChapter([oldName, title]));
+      successToast("Edit Succesful");
+      
     }
     else {
-      dispatch(addChapter(modalInput));
+      dispatch(addChapter(title));
+      successToast("New Chapter Added");
     }
+    onClose()
   }
 
   const chapters = useMemo(() => getChapters(selectedClass, selectedSubject, dataState), [selectedClass, selectedSubject, dataState])
@@ -87,7 +111,7 @@ function ListChapter() {
         <HStack>
         <Heading>Chapters</Heading>
         <Spacer />
-        <Button onClick={() => {onOpen();handleAddChapter()}} colorScheme='green' >Add Chapter</Button>
+        <Button variant='outline' leftIcon={<AddIcon/>} onClick={() => {onOpen();handleAddChapter()}} colorScheme='green' >Add Chapter</Button>
         </HStack>
         {
           chapters.map((e, key) => {
@@ -96,8 +120,8 @@ function ListChapter() {
             <HStack key={key}>
               <Link to={`/Class${selectedClass}/${selectedSubject}/Chapter${key+1}/Topics`}><Text>{e.name}</Text></Link>
               <Spacer />
-              <IconButton icon={<FaEdit />} onClick={() => {onOpen(); handleEditChapter(e.name);}} colorScheme='teal'></IconButton>
-              <IconButton icon={<FaTrash />} onClick={() => dispatch(deleteChapter(e.name))} colorScheme='red'></IconButton>
+              <IconButton variant='outline' icon={<FaEdit />} onClick={() => {onOpen(); handleEditChapter(e.name);}} colorScheme='teal'></IconButton>
+              <IconButton  variant='outline' icon={<FaTrash />} onClick={() => {dispatch(deleteChapter(e.name)); infoToast("Chapter Deleted")}} colorScheme='red'></IconButton>
             </HStack>
           )})
         }
@@ -111,16 +135,18 @@ function ListChapter() {
         <ModalHeader>{modalHeading}</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <FormControl>
-            <Input ref={initialRef} value={modalInput} onChange={(e) => setModalInput(e.target.value)} placeholder="Add New Chapter" />
-          </FormControl>
+          <form onSubmit={handleSave}>
+            <FormControl>
+              <Input ref={initialRef} defaultValue={oldName} name='title' placeholder="Add New Chapter" /> 
+            </FormControl>
+            <Box paddingTop={4}>
+                <Button type='submit' colorScheme="blue" mr={3}>
+                  Save
+                </Button>
+                <Button onClick={onClose}>Cancel</Button>
+              </Box>
+          </form>
         </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={() => {onClose(); handleSave();}}>
-            Save
-          </Button>
-          <Button onClick={onClose}>Cancel</Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
       </VStack>
