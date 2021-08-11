@@ -122,29 +122,76 @@ const initialState = {
 }
 
 const dataReducer = (state = initialState, action) => {
-  let data1 = state.dataState;
   switch(action.type) {
     case ADD_CHAPTER:
-      //let data2 = state.dataState;
-      //console.log(action.payload);
-      data1.find(cls => cls.class === state.selectedClass).subjects.find(sub => sub.name === state.selectedSubject).chapters = [...data1.find(cls => cls.class === state.selectedClass).subjects.find(sub => sub.name === state.selectedSubject).chapters, {
-        name: action.payload,
-        topics: []
-      }]
+      let newDataforAdd = state.dataState.map(std => {
+        if(std.class === state.selectedClass) {
+          return {
+            ...std,
+            subjects: std.subjects.map(sub => {
+              if(sub.name === state.selectedSubject){
+                return {
+                  ...sub,
+                  chapters: [...sub.chapters, {name: action.payload, topics: []}]
+                }
+              } 
+              return sub
+            })
+          }
+        }
+        return std
+      })
       return {...state,
-        dataState: data1
+        dataState: newDataforAdd
       }
     case EDIT_CHAPTER:
-      console.log(action.payload);
-      data1.find(cls => cls.class === state.selectedClass).subjects.find(sub => sub.name === state.selectedSubject).chapters.find(chapter => chapter.name === action.payload[0]).name = action.payload[1];
+      let newDataforEdit = state.dataState.map(std => {
+        if(std.class === state.selectedClass) {
+          return {
+            ...std,
+            subjects: std.subjects.map(sub => {
+              if(sub.name === state.selectedSubject){
+                return {
+                  ...sub,
+                  chapters: sub.chapters.map((chapter) => {
+                    if(chapter.name === action.payload[0]) {
+                      chapter.name = action.payload[1]
+                      return chapter
+                    }
+                    else return chapter
+                  })
+                }
+              } 
+              return sub
+            })
+          }
+        }
+        return std
+      })
       return {...state,
-        dataState: data1
+        dataState: newDataforEdit
       }
     
     case DELETE_CHAPTER:
-      data1.find(cls => cls.class === state.selectedClass).subjects.find(sub => sub.name === state.selectedSubject).chapters = data1.find(cls => cls.class === state.selectedClass).subjects.find(sub => sub.name === state.selectedSubject).chapters.filter((chapter) => chapter.name !== action.payload)
+      let newDataforDelete = state.dataState.map(std => {
+        if(std.class === state.selectedClass) {
+          return {
+            ...std,
+            subjects: std.subjects.map(sub => {
+              if(sub.name === state.selectedSubject){
+                return {
+                  ...sub,
+                  chapters: sub.chapters.filter((chapter) => chapter.name !== action.payload)
+                }
+              } 
+              return sub
+            })
+          }
+        }
+        return std
+      })
       return {...state,
-        dataState: data1
+        dataState: newDataforDelete
       }
 
     case SELECT_CLASS :
