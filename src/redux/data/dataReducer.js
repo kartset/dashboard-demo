@@ -124,6 +124,7 @@ const initialState = {
 const dataReducer = (state = initialState, action) => {
   switch(action.type) {
     case ADD_CHAPTER:
+      console.log("In Add Chapter")
       let newDataforAdd = state.dataState.map(std => {
         if(std.class === state.selectedClass) {
           return {
